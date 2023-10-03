@@ -1,0 +1,108 @@
+---
+title: "Untitled"
+author: "Devon Mastin"
+date: "2023-10-03"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(arm)
+library(ggfortify)
+library(performance)
+library(AICcmodavg)
+library(grid)
+frogs <- read.csv("frogs.csv")
+```
+
+### Altitude
+
+
+```{r}
+ ggplot(frogs,aes(altitude,pres.abs)) +
+   geom_point() +
+   geom_smooth() +
+   xlab ("Altitude") +
+   ylab ("Probability of Presence")
+```
+
+```{r rescale}
+frogs$alt100 <- frogs$altitude/100
+fit.1 <- glm(pres.abs~alt100, data=frogs, binomial(link="logit"))
+autoplot(fit.1) 
+```
+
+
+```{r}
+x <- predict(fit.1)
+y <- resid(fit.1)
+binnedplot(x,y)
+```
+
+```{r}
+coef(fit.1)
+```
+
+
+
+```{r}
+confint(fit.1)
+```
+
+
+```{r}
+ggplot(frogs, aes(altitude, pres.abs)) +
+  geom_point() +
+  geom_smooth(method="glm", method.args=list(family="binomial"(link="logit")))+
+  xlab ("Altitude")+
+  ylab("Probability of Presence")
+
+```
+
+### Number of Breeding Pools
+
+```{r}
+ ggplot(frogs,aes(NoOfPools,pres.abs)) +
+   geom_point() +
+   geom_smooth() +
+   xlab ("# of Breeding Pools") +
+   ylab ("Probability of Presence")
+```
+
+
+```{r rescale2}
+frogs$NoPools100 <- frogs$NoOfPools/100
+fit.2 <- glm(pres.abs~NoPools100, data=frogs, binomial(link="logit"))
+autoplot(fit.2) 
+```
+
+
+
+```{r}
+x <- predict(fit.2)
+y <- resid(fit.2)
+binnedplot(x,y)
+```
+
+
+```{r}
+coef(fit.2)
+```
+
+
+```{r}
+confint(fit.2)
+```
+
+
+```{r}
+ggplot(frogs, aes(NoOfPools, pres.abs)) +
+  geom_point() +
+  geom_smooth(method="glm", method.args=list(family="binomial"(link="logit")))+
+  xlab ("# Breeding Pools")+
+  ylab("Probability of Presence")
+```
+
+
+
